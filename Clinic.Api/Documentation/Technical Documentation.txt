@@ -1,0 +1,7 @@
+Clinic.Api depends on
+	1. Serilog.Extensions.Logging.File, version 1.1.0
+Clinic.Repository depends on:
+	1. Dapper
+	2. Npgsql -  .NET data provider for PostgreSQL
+
+https://github.com/serilog/serilog-aspnetcore
