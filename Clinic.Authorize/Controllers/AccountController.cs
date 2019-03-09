@@ -1,4 +1,5 @@
 using Clinic.Authorize.Attributes;
+using Clinic.Authorize.Core.Repositories;
 using Clinic.Authorize.Extensions;
 using Clinic.Authorize.Models;
 using IdentityModel;
@@ -32,11 +33,13 @@ namespace Clinic.Authorize.Controllers
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
+        private readonly IUserRepository _userRepository;
 
         public AccountController(IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
+            IUserRepository userRepository,
             TestUserStore users = null)
         {
             // if the TestUserStore is not in DI, then we'll just use the global users collection
@@ -47,6 +50,7 @@ namespace Clinic.Authorize.Controllers
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
+            _userRepository = userRepository;
         }
 
         /// <summary>
@@ -57,13 +61,11 @@ namespace Clinic.Authorize.Controllers
         {
             // build a model so we know what to show on the login page
             var vm = await BuildLoginViewModelAsync(returnUrl);
-
             if (vm.IsExternalLoginOnly)
             {
                 // we only have one option for logging in and it's an external provider
                 return RedirectToAction("Challenge", "External", new { provider = vm.ExternalLoginScheme, returnUrl });
             }
-
             return View(vm);
         }
 
@@ -76,7 +78,6 @@ namespace Clinic.Authorize.Controllers
         {
             // check if we are in the context of an authorization request
             var context = await _interaction.GetAuthorizationContextAsync(model.ReturnUrl);
-
             // the user clicked the "cancel" button
             if (button != "login")
             {
@@ -86,7 +87,6 @@ namespace Clinic.Authorize.Controllers
                     // denied the consent (even if this client does not require consent).
                     // this will send back an access denied OIDC error response to the client.
                     await _interaction.GrantConsentAsync(context, ConsentResponse.Denied);
-
                     // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
                     if (await _clientStore.IsPkceClientAsync(context.ClientId))
                     {
@@ -94,7 +94,6 @@ namespace Clinic.Authorize.Controllers
                         // return the response is for better UX for the end user.
                         return View("Redirect", new RedirectViewModel { RedirectUrl = model.ReturnUrl });
                     }
-
                     return Redirect(model.ReturnUrl);
                 }
                 else
@@ -107,7 +106,9 @@ namespace Clinic.Authorize.Controllers
             if (ModelState.IsValid)
             {
                 // validate username/password against in-memory store
-                if (_users.ValidateCredentials(model.Username, model.Password))
+                bool isValidCredential = await _userRepository.ValidateCredentials(model.Username, model.Password);
+                //if (_users.ValidateCredentials(model.Username, model.Password))
+                if(isValidCredential)
                 {
                     var user = _users.FindByUsername(model.Username);
                     await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username));

@@ -1,4 +1,4 @@
-using System;
+/* using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -35,4 +35,4 @@ public class ProfileService : IProfileService
         id.AddClaim(new Claim(JwtClaimTypes.PreferredUserName, user));
         return new ClaimsPrincipal(id);
     }
-}
+} */

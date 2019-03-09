@@ -56,8 +56,7 @@ namespace Clinic.Api
                 options.ResponseType = "";
                 options.SaveTokens = true;
             }); */
-            return services.AddAutofacConfiguration
-            (this.Configuration);
+            return services.AddAutofacConfiguration(this.Configuration);
         }        
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

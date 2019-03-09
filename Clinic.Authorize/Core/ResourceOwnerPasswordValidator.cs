@@ -1,4 +1,4 @@
-using System.Security.Claims;
+/* using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer4.Validation;
 
@@ -20,4 +20,4 @@ public class ResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator
         );
         return;
     }
-}
+} */

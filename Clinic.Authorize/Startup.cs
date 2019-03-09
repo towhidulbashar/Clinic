@@ -15,6 +15,12 @@ using System.Security.Claims;
 using IdentityModel;
 using IdentityServer4.Validation;
 using IdentityServer4.Services;
+using Clinic.Authorize.Persistance.Repositories;
+using Clinic.Authorize.Core.Repositories;
+using Clinic.Authorize.Persistance;
+using Clinic.Authorize.Core;
+using System.Data;
+using Npgsql;
 
 namespace Clinic.Authorize
 {
@@ -29,10 +35,9 @@ namespace Clinic.Authorize
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {           
+        {
             services.AddIdentityServer()
                 .AddSigningCredential("CN=mysite.local")
-                .AddTestUsers(Config.GetTestUsers())
                 .AddInMemoryClients(new Client[] 
                 { 
                     new Client
@@ -41,7 +46,7 @@ namespace Clinic.Authorize
                         ClientName = "React Client",
                         AllowedGrantTypes = GrantTypes.Implicit,
                         AllowAccessTokensViaBrowser = true,
-                        RedirectUris = {"http://localhost:3000/login"},
+                        RedirectUris = {"http://localhost:3000/login-return"},
                         PostLogoutRedirectUris = {"http://localhost:3000/patient"},
                         AllowedCorsOrigins = {"http://localhost:3000"},
                         AllowedScopes = 
@@ -69,8 +74,7 @@ namespace Clinic.Authorize
                 {
                     new ApiResource("clinicApi", "Clinic API")
                 });
-            services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
-            services.AddTransient<IProfileService, ProfileService>();
+            services.AddDefaultDependencyConfiguration(this.Configuration);
             services.AddMvc();
         }
 
@@ -82,11 +86,6 @@ namespace Clinic.Authorize
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            /* app.UseCors(corsPolicyBuilder => 
-                corsPolicyBuilder.WithOrigins("http://localhost:3000")
-                .AllowAnyHeader()
-                .AllowAnyMethod()); */
             app.UseIdentityServer();
             app.UseMvcWithDefaultRoute();
         }

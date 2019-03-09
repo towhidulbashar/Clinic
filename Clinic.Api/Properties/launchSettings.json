@@ -19,7 +19,7 @@
     "Clinic.Api": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/patient",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

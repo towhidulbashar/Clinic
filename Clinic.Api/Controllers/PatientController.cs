@@ -21,6 +21,7 @@ namespace Clinic.Api.Controllers
         {
             var resut = await work.PatientRepository.Get();
             work.Complete();
+            
             return Ok(resut);
         }
         [HttpPost]
