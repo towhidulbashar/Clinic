@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:51980/",
+      "applicationUrl": "http://localhost:51001/",
       "sslPort": 0
     }
   },
@@ -19,11 +19,11 @@
     "Clinic.Api": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "api/patient",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://localhost:51981/"
+      "applicationUrl": "http://localhost:51001/"
     }
   }
 }

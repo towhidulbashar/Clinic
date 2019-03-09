@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Clinic.Api.Core;
 using Clinic.Api.Core.Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Clinic.Api.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/Patient")]
     public class PatientController : Controller
@@ -19,6 +21,7 @@ namespace Clinic.Api.Controllers
         {
             var resut = await work.PatientRepository.Get();
             work.Complete();
+            
             return Ok(resut);
         }
         [HttpPost]

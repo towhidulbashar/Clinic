@@ -27,6 +27,35 @@ namespace Clinic.Api
         {
             services.AddCors();
             services.AddMvc();
+            services.AddAuthentication("Bearer")
+            .AddIdentityServerAuthentication(option => 
+            {
+                option.Authority = "http://localhost:51000"; //Who do we trust
+                option.RequireHttpsMetadata = false; //Just for development
+                option.ApiName = "clinicApi";
+            });
+            /* .AddAuthentication(options => 
+            {
+                options.DefaultScheme =  "";
+                options.DefaultChallengeScheme = "oidc";
+            })
+            .AddJwtBearer(jwt => 
+            {
+                
+                jwt.Audience= "clinicApi"; //Who are we
+                jwt.Authority = "http://localhost:51000"; //Who do we trust
+                jwt.RequireHttpsMetadata = false; //Just for development
+            
+            })
+            .AddOpenIdConnect("oidc", options => 
+            {                
+                options.SignInScheme = "";
+                options.Authority = "http://localhost:51000/";
+                options.RequireHttpsMetadata = false;
+                options.ClientId = "react client"; //who am I
+                options.ResponseType = "";
+                options.SaveTokens = true;
+            }); */
             return services.AddAutofacConfiguration(this.Configuration);
         }        
 
@@ -42,6 +71,7 @@ namespace Clinic.Api
                 corsPolicyBuilder.WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
                 .AllowAnyHeader());
+            app.UseAuthentication();            
             app.UseMvc();
         }
     }
