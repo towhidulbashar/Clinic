@@ -12,7 +12,6 @@ namespace Clinic.Api.Core.Repositories
     {
         private IDbTransaction Transaction { get; set; }
         public IDbConnection Connection { get { return Transaction.Connection; } }
-        private string tableName = string.Empty;
         public Repository(IDbTransaction transaction)
         {
             this.Transaction = transaction;

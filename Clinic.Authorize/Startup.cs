@@ -34,7 +34,7 @@ namespace Clinic.Authorize
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddIdentityServer()
                 .AddSigningCredential("CN=mysite.local")
@@ -47,7 +47,7 @@ namespace Clinic.Authorize
                         AllowedGrantTypes = GrantTypes.Implicit,
                         AllowAccessTokensViaBrowser = true,
                         RedirectUris = {"http://localhost:3000/login-return"},
-                        PostLogoutRedirectUris = {"http://localhost:3000/patient"},
+                        PostLogoutRedirectUris = {"http://localhost:3000/Login"},
                         AllowedCorsOrigins = {"http://localhost:3000"},
                         AllowedScopes = 
                         {
@@ -74,8 +74,9 @@ namespace Clinic.Authorize
                 {
                     new ApiResource("clinicApi", "Clinic API")
                 });
-            services.AddDefaultDependencyConfiguration(this.Configuration);
+            
             services.AddMvc();
+            return services.AddAutofacConfiguration(this.Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
