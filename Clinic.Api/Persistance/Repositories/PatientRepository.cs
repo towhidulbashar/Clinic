@@ -24,17 +24,16 @@ namespace Clinic.Api.Persistance.Repositories
             }
             string query = $@"INSERT INTO patient (name, gender, age, date_of_birth, mobile_number, address, occupation, blood_group)
              VALUES ( @name, @gender, @age, @date_of_birth, @mobile_number, @address, @occupation, @blood_group);";
-            await Connection.ExecuteAsync(query, new
-            {
-                name = entity.Name,
-                gender = entity.Gender,
-                age = entity.Age,
-                date_of_birth = entity.DateOfBirth,
-                mobile_number = entity.MobileNumber,
-                address = entity.Address,
-                occupation = entity.Occupation,
-                blood_group = entity.BloodGroup
-            });
+            var patientParameters = new DynamicParameters();
+            patientParameters.Add("name", entity.Name, DbType.String, ParameterDirection.Input, 1024);
+            patientParameters.Add("gender", entity.Gender, DbType.String, ParameterDirection.Input, 56);
+            patientParameters.Add("age", entity.Age, DbType.Int16, ParameterDirection.Input);
+            patientParameters.Add("date_of_birth", entity.DateOfBirth, DbType.DateTime, ParameterDirection.Input, 1024);
+            patientParameters.Add("mobile_number", entity.MobileNumber, DbType.String, ParameterDirection.Input, 16);
+            patientParameters.Add("address", entity.Address, DbType.String, ParameterDirection.Input, 10240);
+            patientParameters.Add("occupation", entity.Occupation, DbType.String, ParameterDirection.Input, 1024);
+            patientParameters.Add("blood_group", entity.BloodGroup, DbType.String, ParameterDirection.Input, 8);
+            await Connection.ExecuteAsync(query, patientParameters);
         }
 
         public override void Add(IEnumerable<Patient> entities)
