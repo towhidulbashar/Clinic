@@ -1,4 +1,5 @@
 using Clinic.Authorize.Attributes;
+using Clinic.Authorize.Core;
 using Clinic.Authorize.Core.Repositories;
 using Clinic.Authorize.Extensions;
 using Clinic.Authorize.Models;
@@ -33,13 +34,15 @@ namespace Clinic.Authorize.Controllers
         private readonly IClientStore _clientStore;
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
-        private readonly IUserRepository _userRepository;
+        //private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _work;
 
         public AccountController(IIdentityServerInteractionService interaction,
             IClientStore clientStore,
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
-            IUserRepository userRepository,
+            //IUserRepository userRepository,
+            IUnitOfWork work,
             TestUserStore users = null)
         {
             // if the TestUserStore is not in DI, then we'll just use the global users collection
@@ -50,7 +53,9 @@ namespace Clinic.Authorize.Controllers
             _clientStore = clientStore;
             _schemeProvider = schemeProvider;
             _events = events;
-            _userRepository = userRepository;
+            //_userRepository = userRepository;
+            //_userRepository = work.UserRepository;
+            _work = work;
         }
 
         /// <summary>
@@ -106,7 +111,7 @@ namespace Clinic.Authorize.Controllers
             if (ModelState.IsValid)
             {
                 // validate username/password against in-memory store
-                bool isValidCredential = await _userRepository.ValidateCredentials(model.Username, model.Password);
+                bool isValidCredential = await _work.UserRepository.ValidateCredentials(model.Username, model.Password);
                 //if (_users.ValidateCredentials(model.Username, model.Password))
                 if(isValidCredential)
                 {
@@ -163,6 +168,7 @@ namespace Clinic.Authorize.Controllers
 
             // something went wrong, show form with error
             var vm = await BuildLoginViewModelAsync(model);
+            _work.Complete();
             return View(vm);
         }
 
