@@ -43,7 +43,7 @@ namespace Clinic.Authorize
                     new Client
                     { 
                         ClientId = "reactClient", 
-                        ClientName = "React Client",
+                        ClientName = "Clinic Management",
                         AllowedGrantTypes = GrantTypes.Implicit,
                         AllowAccessTokensViaBrowser = true,
                         RedirectUris = {"http://localhost:3000/login-return"},
